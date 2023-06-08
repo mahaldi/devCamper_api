@@ -22,7 +22,7 @@ exports.createBootcamp = async (req, res, next) => {
   res.status(201).json({
     success: true,
     message: 'OK',
-    // data: bootcamp
+    data: req.body
   })
 }
 
