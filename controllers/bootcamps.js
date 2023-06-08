@@ -34,11 +34,8 @@ exports.getBootcamp = async (req, res, next) => {
       message: 'OK',
       data: bootcamp
     })
-  } catch (error) {
-    res.status(404).json({ // kalo dari format id nya salah dia masuk nya ke sini, walau aneh harusnya kalo ga ketemu balik aja ke sini dari mongodb nya
-      success: false,
-      messsage: 'not found'
-    })
+  } catch (error) { // kalo dari format id nya salah dia masuk nya ke sini, walau aneh harusnya kalo ga ketemu balik aja ke sini dari mongodb nya
+    next(error)
   }
 }
 
