@@ -1,5 +1,5 @@
 const Bootcamp = require("../models/Bootcamp")
-
+const ErrorResponse = require('../utils/errorResponse')
 
 exports.getBootcamps = async (req, res, next) => {
   try {
@@ -24,18 +24,16 @@ exports.getBootcamp = async (req, res, next) => {
     const bootcamp = await Bootcamp.findById(req.params.id)
 
     if(!bootcamp) { // kalo ga ketemu tapi format id nya bener
-      return res.status(404).json({
-        success: false,
-        messsage: 'not found'
-      })
+      return next(new ErrorResponse(`id ${req.params.id} not found`, 404))
     }
+    
     res.status(200).json({
       success: true,
       message: 'OK',
       data: bootcamp
     })
   } catch (error) { // kalo dari format id nya salah dia masuk nya ke sini, walau aneh harusnya kalo ga ketemu balik aja ke sini dari mongodb nya
-    next(error)
+    next(new ErrorResponse(`id ${req.params.id} not found`, 404))
   }
 }
 
