@@ -1,3 +1,4 @@
+const Bootcamp = require("../models/Bootcamp")
 
 
 exports.getBootcamps = (req, res, next) => {
@@ -14,10 +15,14 @@ exports.getBootcamp = (req, res, next) => {
   })
 }
 
-exports.createBootcamp = (req, res, next) => {
-  res.status(200).json({
+exports.createBootcamp = async (req, res, next) => {
+  console.log('req.body', req.body)
+  // const bootcamp = await Bootcamp.create(req.body)
+
+  res.status(201).json({
     success: true,
-    message: 'OK'
+    message: 'OK',
+    // data: bootcamp
   })
 }
 
