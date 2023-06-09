@@ -11,6 +11,10 @@ const errorHandler = (err, req, res, next) => {
     const message = `id ${error.value} not found`
     error = new ErrorHandler(message, 404)
   }
+  if(err.name === 'ValidationError') {
+    const messages = Object.values(err.errors).map(item => item.message)
+    error = new ErrorHandler(messages, 404)
+  }
   if(err.code === 11000) {
     const message = `Duplicate field value`
     error = new ErrorHandler(message, 404)
