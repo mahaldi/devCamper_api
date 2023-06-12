@@ -9,18 +9,25 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   // gt = greater than
   // lte = less than equal
   const reqQuery = { ...req.query }
-  const reservedField = ['select'] // kalo mau nampilin field tertentu doang
+  const reservedField = ['select', 'sort'] // kalo mau nampilin field tertentu doang
   reservedField.forEach(param => delete reqQuery[param])
 
   const queryString = JSON.stringify(reqQuery).replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   const queryParsed = JSON.parse(queryString)
   let query = Bootcamp.find(queryParsed)
 
-  const { select: selectQuery } = req.query
+  const { select: selectQuery, sort: sortQuery } = req.query
 
   if(selectQuery) {
     const selectField = selectQuery.split(',').join(' ') // keperluan mongoose pengennya gitu kalo mau select
     query = query.select(selectField) // contoh nya ?select=description,name maka bakal nampilin field name dan description doang
+  }
+
+  if(sortQuery) {
+    const sortBy = sortQuery.split(',').join(' ') //contoh: ?sort=name atau ?sort=-name
+    query = query.sort(sortBy)
+  } else {
+    query = query.sort('-createdBy')
   }
 
   const bootcamps = await query
