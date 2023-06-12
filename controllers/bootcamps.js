@@ -4,7 +4,14 @@ const asyncHandler = require('../middleware/async')
 
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
-  const bootcamps = await Bootcamp.find()
+  // contoh query params nya ?averageCost[gte]=6000
+  // gte = greater than equal
+  // gt = greater than
+  // lte = less than equal
+  
+  const queryString = JSON.stringify(req.query).replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
+  const query = JSON.parse(queryString)
+  const bootcamps = await Bootcamp.find(query)
 
   res.status(200).json({
     success: true,
