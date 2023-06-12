@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const slugify = require('slugify')
 
 const BootcampSchema = new mongoose.Schema({
   name: {
@@ -51,7 +52,8 @@ const BootcampSchema = new mongoose.Schema({
       'Web Development',
       'Business',
       'Other',
-      'Mobile Development'
+      'Mobile Development',
+      'Data Science'
     ]
   },
   averageRating: {
@@ -85,5 +87,11 @@ const BootcampSchema = new mongoose.Schema({
     default: Date.now
   },
 });
+
+BootcampSchema.pre('save', function(next) {
+  console.log('name', this.name)
+  this.slug = slugify(this.name, { lower: true })
+  next()
+})
 
 module.exports = mongoose.model('Bootcamp', BootcampSchema);
