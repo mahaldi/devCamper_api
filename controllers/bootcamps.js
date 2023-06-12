@@ -9,14 +9,14 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   // gt = greater than
   // lte = less than equal
   const reqQuery = { ...req.query }
-  const reservedField = ['select', 'sort'] // kalo mau nampilin field tertentu doang
+  const reservedField = ['select', 'sort', 'page', 'limit'] // kalo mau nampilin field tertentu doang
   reservedField.forEach(param => delete reqQuery[param])
 
   const queryString = JSON.stringify(reqQuery).replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   const queryParsed = JSON.parse(queryString)
   let query = Bootcamp.find(queryParsed)
 
-  const { select: selectQuery, sort: sortQuery } = req.query
+  const { select: selectQuery, sort: sortQuery, page: pageQuery, limit: limitQuery } = req.query
 
   if(selectQuery) {
     const selectField = selectQuery.split(',').join(' ') // keperluan mongoose pengennya gitu kalo mau select
@@ -30,12 +30,34 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
     query = query.sort('-createdBy')
   }
 
+  const page = parseInt(pageQuery, 10) || 1
+  const limit = parseInt(limitQuery, 10) || 10
+  const startIndex = (page - 1) * limit
+  const endIndex = page * limit
+  query = query.skip(startIndex).limit(limit)
+  const total = await Bootcamp.countDocuments() // semua data yang ada
+  
   const bootcamps = await query
+  const pagination = {}
+  
+  if(endIndex < total) {
+    pagination.next ={
+      page: page + 1,
+      limit
+    }
+  }
+  if(startIndex > 0) {
+    pagination.prev = {
+      page: page - 1,
+      limit
+    }
+  } 
   res.status(200).json({
     success: true,
     message: 'OK',
     data: bootcamps,
-    total: bootcamps.length
+    total: bootcamps.length,
+    pagination
   })
 })
 
