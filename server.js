@@ -10,6 +10,7 @@ env.config({ path: './config/config.env' });
 connectDB();
 
 const bootcamps = require('./routes/bootcamps');
+const courses = require('./routes/courses')
 
 const app = express();
 
@@ -21,8 +22,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // mount routers
-app.use('/api/v1/bootcamps', bootcamps);
+const middle_url = '/api/v1'
+app.use(`${middle_url}/bootcamps`, bootcamps);
+app.use(`${middle_url}/courses`, courses);
+
 app.use(errorHandler);
+
 const PORT = process.env.PORT || 6666;
 
 const server = app.listen(
