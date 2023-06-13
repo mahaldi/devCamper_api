@@ -14,7 +14,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
   const queryString = JSON.stringify(reqQuery).replace(/\b(gt|gte|lt|lte|in)\b/g, match => `$${match}`)
   const queryParsed = JSON.parse(queryString)
-  let query = Bootcamp.find(queryParsed)
+  let query = Bootcamp.find(queryParsed).populate('courses') // course ini dari nama virtual yang ada di model Bottcamp
 
   const { select: selectQuery, sort: sortQuery, page: pageQuery, limit: limitQuery } = req.query
 
