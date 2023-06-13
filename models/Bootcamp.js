@@ -97,6 +97,13 @@ BootcampSchema.pre('save', function(next) {
   next()
 })
 
+// remove course when the bootcamp will be deleted
+BootcampSchema.pre('remove', async function(next) {
+  console.log('on deleteOne')
+  await this.model('Course').deleteMany({ bootcamp: this._id })
+  next()
+})
+
 // reverse population with virtual
 BootcampSchema.virtual('courses', {
   ref: 'Course',
